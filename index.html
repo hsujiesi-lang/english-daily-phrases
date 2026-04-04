@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="英文練習">
+<meta name="theme-color" content="#0a1628">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>120 Daily Phrases Practice</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a1628;color:#e0e0e0;min-height:100vh;min-height:100dvh;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+.app{max-width:480px;margin:0 auto;padding:16px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh}
+button,.home-card{-webkit-touch-callout:none;touch-action:manipulation}
+button:active{transform:scale(0.97)}
+
+/* Progress */
+.prog-bar{width:100%;height:6px;background:#1a2a4a;border-radius:3px;margin-bottom:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#2d7,#5bf);border-radius:3px;transition:width .3s}
+.prog-text{text-align:center;font-size:13px;color:#6a8ab0;margin-bottom:16px}
+
+/* Card */
+.card{background:#121e36;border:1px solid #1e3050;border-radius:16px;padding:20px;margin-bottom:16px}
+.card-lg{font-size:20px;color:#f0f0f0;line-height:1.5;margin-bottom:8px}
+.card-zh{font-size:15px;color:#6a8ab0;margin-bottom:12px}
+.card-sm{font-size:13px;color:#556;margin-bottom:8px}
+
+/* Tags */
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-right:4px;margin-bottom:8px}
+.b-blue{background:#1a3a6a;color:#5bf}
+.b-purple{background:#2a1a3a;color:#d8b4fe}
+.b-green{background:#1a4a2a;color:#2d7}
+.b-orange{background:#4a3a1a;color:#fb3}
+.b-cat{background:#1a2a4a;color:#8ab}
+
+/* Audio */
+.audio-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.btn-play{width:46px;height:46px;border-radius:50%;border:2px solid #5bf;background:transparent;color:#5bf;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-play:hover{background:#1a3a6a}
+.spd{padding:4px 10px;border:1px solid #2a3a5c;background:#0e1a30;color:#8899bb;border-radius:6px;font-size:12px;cursor:pointer}
+.spd.on{border-color:#5bf;color:#5bf}
+
+/* Input */
+.inp{width:100%;padding:14px 16px;background:#0e1a30;border:1px solid #2a3a5c;border-radius:12px;color:#f0f0f0;font-size:16px;outline:none;transition:border-color .2s;font-family:inherit}
+.inp:focus{border-color:#5bf}
+textarea.inp{resize:none;min-height:70px}
+
+/* Buttons */
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:10px;min-height:50px}
+.btn-p{background:linear-gradient(135deg,#1a5a9a,#2a7acc);color:#fff}
+.btn-p:hover{background:linear-gradient(135deg,#2a6aaa,#3a8add)}
+.btn-mic{background:#2a1a3a;color:#d8b4fe;border:1px solid #4a2a6a}
+.btn-mic.rec{background:#5a1a3a;color:#ff6b8a;border-color:#ff6b8a;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,138,.3)}50%{box-shadow:0 0 0 10px rgba(255,107,138,0)}}
+.btn-s{background:#1a2a4a;color:#8899bb;border:1px solid #2a3a5c}
+.btn-sk{background:transparent;color:#6a8ab0;border:1px solid #2a3a5c}
+.btn-back{width:auto;padding:8px 16px;margin-bottom:12px;background:transparent;border:1px solid #2a3a5c;border-radius:10px;color:#6a8ab0;font-size:14px;cursor:pointer}
+
+/* Result */
+.res{background:#0e1a30;border:1px solid #2a3a5c;border-radius:12px;padding:16px;margin-bottom:12px}
+.res-label{font-size:13px;color:#6a8ab0;margin-bottom:6px}
+.res-text{font-size:16px;line-height:1.6}
+.w-ok{color:#2d7}.w-no{color:#ff6b8a;background:rgba(255,107,138,.12);padding:2px 4px;border-radius:4px}
+.sc{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:600;margin-bottom:12px}
+.sc-g{background:#1a4a2a;color:#2d7}.sc-y{background:#3a3a1a;color:#ed2}.sc-r{background:#4a1a1a;color:#ff6b8a}
+
+/* Home */
+.home-card{background:#121e36;border:1px solid #1e3050;border-radius:16px;padding:20px;margin-bottom:12px;cursor:pointer;transition:all .2s}
+.home-card:hover{border-color:#5bf;transform:translateY(-2px)}
+.home-card h3{color:#5bf;font-size:16px;margin-bottom:6px}
+.home-card p{color:#6a8ab0;font-size:13px;line-height:1.5}
+.home-title{text-align:center;margin-bottom:20px}
+.home-title h1{font-size:22px;color:#5bf;margin-bottom:4px}
+.home-title p{color:#6a8ab0;font-size:13px}
+.stats-row{display:flex;gap:10px;margin-bottom:16px}
+.stat-box{flex:1;background:#121e36;border:1px solid #1e3050;border-radius:12px;padding:12px;text-align:center}
+.stat-num{font-size:24px;font-weight:700;color:#5bf}
+.stat-label{font-size:11px;color:#6a8ab0}
+
+/* Category filter */
+.cat-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cat-btn{padding:6px 12px;border:1px solid #2a3a5c;background:#121e36;color:#8899bb;border-radius:20px;font-size:12px;cursor:pointer}
+.cat-btn.on{background:#1a3a6a;color:#5bf;border-color:#5bf}
+
+/* Fill blank */
+.fill-line{font-size:18px;line-height:2;color:#f0f0f0;margin-bottom:8px}
+.blank-inp{display:inline-block;background:transparent;border:none;border-bottom:2px solid #5bf;color:#5bf;font-size:16px;font-weight:600;width:auto;min-width:140px;padding:2px 4px;outline:none;font-family:inherit}
+
+/* Sentence frame */
+.frame{font-size:15px;color:#5bf;background:#0e1a30;border:1px solid #1e3050;border-radius:10px;padding:10px 14px;margin-bottom:12px;line-height:1.8}
+.frame strong{color:#fb3}
+
+/* Show/hide */
+.hidden{display:none!important}
+.show-link{text-align:center;margin-top:8px}
+.show-link a{color:#5bf;font-size:13px;cursor:pointer;text-decoration:underline}
+
+/* Install */
+.install-banner{background:linear-gradient(135deg,#1a3a6a,#2a5a9a);border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.install-banner p{font-size:13px;color:#d0e0f0;flex:1}
+.install-banner button{padding:8px 16px;background:#5bf;color:#0a1628;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* Review mode */
+.tab-row{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-row::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:8px 14px;border:1px solid #2a3a5c;background:#121e36;color:#8899bb;border-radius:10px;font-size:13px;cursor:pointer;white-space:nowrap}
+.tab-btn.on{background:#1a3a6a;color:#5bf;border-color:#5bf}
+.rv-item{background:#121e36;border:1px solid #1e3050;border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px}
+.rv-num{color:#5bf;font-weight:700;font-size:14px;min-width:28px;text-align:right;padding-top:2px}
+.rv-body{flex:1}
+.rv-en{font-size:15px;color:#f0f0f0;margin-bottom:4px;line-height:1.4}
+.rv-zh{font-size:13px;color:#6a8ab0}
+.rv-past{font-size:12px;color:#8a7ab0;margin-top:3px}
+.rv-play{width:36px;height:36px;border-radius:50%;border:1.5px solid #5bf;background:transparent;color:#5bf;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:center}
+.rv-play:hover{background:#1a3a6a}
+.rv-search{width:100%;padding:10px 14px;background:#0e1a30;border:1px solid #2a3a5c;border-radius:10px;color:#f0f0f0;font-size:15px;outline:none;margin-bottom:12px}
+.rv-search:focus{border-color:#5bf}
+.rv-search::placeholder{color:#4a6080}
+.rv-active{border-color:#5bf!important;background:#0e1a30!important;box-shadow:0 0 12px rgba(85,187,255,.15)}
+.btn-stop{background:linear-gradient(135deg,#8a2a3a,#c44);color:#fff}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+// ============ 120 PHRASES DATA ============
+const DATA = [
+  // 1.1 Routine (1-30)
+  {id:1, zh:"去吃午餐/晚餐", en:"go get lunch/dinner", past:"went to get lunch/dinner", cat:"routine", sa:true},
+  {id:2, zh:"去 Target/Walmart 買日用品/採購食品雜貨", en:"get some groceries from Target/Walmart", past:"got some groceries from Target/Walmart", cat:"routine", sa:true},
+  {id:3, zh:"去藥局(CVS)買些東西", en:"get some stuff from the pharmacy", past:"got some stuff from the pharmacy", cat:"routine", sa:true},
+  {id:4, zh:"加油（給車加油）", en:"put gas in my car", past:"put gas in my car", cat:"routine", sa:true},
+  {id:5, zh:"把車送去保養中心/做保養", en:"take my car to the service center to get service", past:"took my car to the service center to get service", cat:"routine"},
+  {id:6, zh:"把車開去洗車場/洗車", en:"take my car to the car wash to get washed", past:"took my car to the car wash to get washed", cat:"routine"},
+  {id:7, zh:"去銀行更新存摺/兌現支票", en:"go to the bank to cash a check", past:"went to the bank to cash a check", cat:"routine"},
+  {id:8, zh:"去銀行開立活期/儲蓄帳戶", en:"go to the bank to open a new checking/saving account", past:"went to the bank to open a new checking/saving account", cat:"routine", sa:true},
+  {id:9, zh:"跑腿辦點事", en:"run some errands", past:"ran some errands", cat:"routine", sa:true},
+  {id:10, zh:"送爸爸去機場/帶我的貓去看獸醫", en:"take my dad to the airport", past:"took my dad to the airport", cat:"routine"},
+  {id:11, zh:"幫我媽設定她的新手機", en:"help my mom set up her new phone", past:"helped my mom set up her new phone", cat:"routine"},
+  {id:12, zh:"準備參加派對", en:"get ready for the party", past:"got ready for the party", cat:"routine", sa:true},
+  {id:13, zh:"開始收拾行李準備旅行", en:"start packing for the trip", past:"started packing for the trip", cat:"routine", sa:true},
+  {id:14, zh:"準備這週的餐點", en:"meal prep for the week", past:"meal prepped for the week", cat:"routine", sa:true},
+  {id:15, zh:"做頭髮（剪髮/染髮/燙直/燙捲）", en:"get my hair done", past:"got my hair done", cat:"routine"},
+  {id:16, zh:"做指甲", en:"get my nails done", past:"got my nails done", cat:"routine"},
+  {id:17, zh:"冥想十分鐘", en:"meditate for 10 minutes", past:"meditated for 10 minutes", cat:"routine"},
+  {id:18, zh:"在家快速做心肺/核心/下半身/上半身運動", en:"do a quick home cardio/abs/lower body workout", past:"did a quick home cardio/abs workout", cat:"routine", sa:true},
+  {id:19, zh:"換衣服/準備出門", en:"get dressed and get ready", past:"got dressed and got ready", cat:"routine"},
+  {id:20, zh:"繳水電（電費/水費/網路費/電話費/瓦斯費）", en:"pay my utilities", past:"paid my utilities", cat:"routine", sa:true},
+  {id:21, zh:"繳信用卡費", en:"pay my credit card bill", past:"paid my credit card bill", cat:"routine", sa:true},
+  {id:22, zh:"繳房租/房貸", en:"pay the rent", past:"paid the rent", cat:"routine", sa:true},
+  {id:23, zh:"設提醒來繳帳單", en:"set a reminder for paying the bills", past:"set a reminder for paying the bills", cat:"routine"},
+  {id:24, zh:"研究某個主題（例如學哪種程式語言）", en:"do some research on something", past:"did some research on something", cat:"routine", sa:true},
+  {id:25, zh:"檢視我的財務狀況/預算", en:"review my financials/budget", past:"reviewed my financials/budget", cat:"routine"},
+  {id:26, zh:"打電話給信用卡公司取消卡片", en:"call my credit card company to cancel the card", past:"called my credit card company to cancel the card", cat:"routine"},
+  {id:27, zh:"預約看醫生/牙醫", en:"make a doctor's/dentist appointment", past:"made a doctor's/dentist appointment", cat:"routine", sa:true},
+  {id:28, zh:"預約今晚的晚餐餐廳", en:"make a reservation for the dinner tonight", past:"made a reservation for the dinner tonight", cat:"routine", sa:true},
+  {id:29, zh:"煮飯前先解凍雞肉", en:"defrost the chicken before cooking", past:"defrosted the chicken before cooking", cat:"routine"},
+  {id:30, zh:"安排約會之夜", en:"plan a date night", past:"planned a date night", cat:"routine", sa:true},
+
+  // 1.2 Home (31-60)
+  {id:31, zh:"打掃家裡", en:"clean the house", past:"cleaned the house", cat:"home", sa:true},
+  {id:32, zh:"倒垃圾", en:"take out the trash", past:"took out the trash", cat:"home", sa:true},
+  {id:33, zh:"洗衣服", en:"do the laundry", past:"did the laundry", cat:"home", sa:true},
+  {id:34, zh:"摺好並收好衣服", en:"fold and put away the clothes", past:"folded and put away the clothes", cat:"home"},
+  {id:35, zh:"洗碗", en:"clean the dishes", past:"cleaned the dishes", cat:"home", sa:true},
+  {id:36, zh:"清理我的抽屜", en:"clean out my drawer", past:"cleaned out my drawer", cat:"home"},
+  {id:37, zh:"清理冰箱和冷凍庫", en:"clean out the fridge and the freezer", past:"cleaned out the fridge and the freezer", cat:"home"},
+  {id:38, zh:"整理我的衣櫃", en:"organize my closet", past:"organized my closet", cat:"home"},
+  {id:39, zh:"把夏天衣服拿出來，把冬天衣服收起來", en:"take out the summer clothes and put away the winter clothes", past:"took out the summer clothes and put away the winter clothes", cat:"home"},
+  {id:40, zh:"掃地", en:"sweep the floor", past:"swept the floor", cat:"home"},
+  {id:41, zh:"拖地", en:"mop the floor", past:"mopped the floor", cat:"home"},
+  {id:42, zh:"整理食品儲藏室", en:"organize my pantry", past:"organized my pantry", cat:"home"},
+  {id:43, zh:"擦乾淨我的廚房檯面", en:"wipe down my kitchen counter", past:"wiped down my kitchen counter", cat:"home"},
+  {id:44, zh:"丟掉過期的食物", en:"throw away the expired food", past:"threw away the expired food", cat:"home"},
+  {id:45, zh:"遛狗", en:"walk my dog", past:"walked my dog", cat:"home"},
+  {id:46, zh:"丟垃圾/資源回收/有機垃圾", en:"take out the trash/recycling/landfill", past:"took out the trash/recycling", cat:"home", sa:true},
+  {id:47, zh:"用吸塵器清理客廳", en:"vacuum clean the living room", past:"vacuum cleaned the living room", cat:"home"},
+  {id:48, zh:"清潔烤箱", en:"clean the oven", past:"cleaned the oven", cat:"home"},
+  {id:49, zh:"消毒門把", en:"disinfect the door handles", past:"disinfected the door handles", cat:"home"},
+  {id:50, zh:"翻床墊", en:"rotate the mattress", past:"rotated the mattress", cat:"home"},
+  {id:51, zh:"更換床單和枕頭套", en:"change the bed sheets and pillow cases", past:"changed the bed sheets and pillow cases", cat:"home"},
+  {id:52, zh:"清潔天花板風扇", en:"clean ceiling fans", past:"cleaned ceiling fans", cat:"home"},
+  {id:53, zh:"修理我臥室天花板的漏水問題", en:"fix a leak in my bedroom ceiling", past:"fixed a leak in my bedroom ceiling", cat:"home"},
+  {id:54, zh:"修理漏水的水龍頭", en:"repair a leaky faucet", past:"repaired a leaky faucet", cat:"home"},
+  {id:55, zh:"打電話請水電工修理馬桶/水槽", en:"call the plumber to fix the toilet/sink", past:"called the plumber to fix the toilet/sink", cat:"home", sa:true},
+  {id:56, zh:"更換燈泡", en:"replace the light bulbs", past:"replaced the light bulbs", cat:"home"},
+  {id:57, zh:"更換冷氣濾網", en:"change the AC filter", past:"changed the AC filter", cat:"home"},
+  {id:58, zh:"安裝新窗簾", en:"install new curtains", past:"installed new curtains", cat:"home"},
+  {id:59, zh:"打包準備搬家", en:"pack up for the move", past:"packed up for the move", cat:"home", sa:true},
+  {id:60, zh:"傳訊息給我的房東", en:"text/message my landlord", past:"texted/messaged my landlord", cat:"home", sa:true},
+
+  // 1.3 Work & School (61-90)
+  {id:61, zh:"去上課", en:"go to my class", past:"went to my class", cat:"school", sa:true},
+  {id:62, zh:"檢查作業並修改內容", en:"go through my homework and fix some stuff", past:"went through my homework and fixed some stuff", cat:"school", sa:true},
+  {id:63, zh:"給教授發送後續郵件", en:"send a follow up email to my professor", past:"sent a follow up email to my professor", cat:"school", sa:true},
+  {id:64, zh:"練習英文", en:"practice English", past:"practiced English", cat:"school", sa:true},
+  {id:65, zh:"為明天的考試讀書", en:"study for the exam tomorrow", past:"studied for the exam tomorrow", cat:"school", sa:true},
+  {id:66, zh:"複習課堂筆記", en:"review class notes", past:"reviewed class notes", cat:"school", sa:true},
+  {id:67, zh:"為明天的考試/期中考/期末考準備", en:"study for the exam/midterm/final tomorrow", past:"studied for the exam/midterm/final", cat:"school", sa:true},
+  {id:68, zh:"準備補考", en:"prepare for the makeup exam", past:"prepared for the makeup exam", cat:"school", sa:true},
+  {id:69, zh:"撰寫論文/研究報告", en:"write an essay/research paper", past:"wrote an essay/research paper", cat:"school", sa:true},
+  {id:70, zh:"和同學碰面進行小組作業", en:"meet with my classmates for the group project", past:"met with my classmates for the group project", cat:"school", sa:true},
+  {id:71, zh:"在教授的辦公時間去討論問題", en:"go to my professor's office hours", past:"went to my professor's office hours", cat:"school", sa:true},
+  {id:72, zh:"與大學輔導員/家教/學術顧問碰面", en:"meet with college counselor/tutor/academic advisor", past:"met with my college counselor/tutor/academic advisor", cat:"school", sa:true},
+  {id:73, zh:"在網上找工作或實習機會", en:"look for a job or an internship online", past:"looked for a job or an internship online", cat:"school", sa:true},
+  {id:74, zh:"更新履歷", en:"update my CV/resume", past:"updated my CV/resume", cat:"school", sa:true},
+  {id:75, zh:"準備申請大學/研究所", en:"work on my application to several colleges/graduate schools", past:"worked on my application to several colleges/graduate schools", cat:"school", sa:true},
+  {id:76, zh:"規劃並註冊下學期課程", en:"plan and sign up for courses for next semester", past:"planned and signed up for courses for next semester", cat:"school", sa:true},
+  {id:77, zh:"申請獎學金/助學金", en:"apply for scholarships/grants", past:"applied for scholarships/grants", cat:"school", sa:true},
+  {id:78, zh:"準備去辦公室", en:"get ready to go to the office", past:"got ready to go to the office", cat:"school"},
+  {id:79, zh:"設定好電腦", en:"set up my computer", past:"set up my computer", cat:"school", sa:true},
+  {id:80, zh:"從辦公室取回電腦", en:"pick up my computer from the office", past:"picked up my computer from the office", cat:"school"},
+  {id:81, zh:"準備簡報", en:"prepare for a presentation", past:"prepared for a presentation", cat:"school", sa:true},
+  {id:82, zh:"回覆工作郵件", en:"respond to work emails", past:"responded to work emails", cat:"school"},
+  {id:83, zh:"參加會議", en:"attend a meeting", past:"attended a meeting", cat:"school"},
+  {id:84, zh:"傳檔案來趕上截止日期", en:"send the files in to meet the deadline", past:"sent the files in to meet the deadline", cat:"school", sa:true},
+  {id:85, zh:"查看會議錄影/瀏覽會議紀錄", en:"watch the meeting recordings/skim through the meeting minutes", past:"watched the meeting recordings/skimmed through the meeting minutes", cat:"school"},
+  {id:86, zh:"參加會議/研討會", en:"attend a conference/seminar", past:"attended a conference/seminar", cat:"school", sa:true},
+  {id:87, zh:"重新整理工作空間", en:"reorganize my workspace", past:"reorganized my workspace", cat:"school"},
+  {id:88, zh:"銷毀舊文件", en:"shred old documents", past:"shredded old documents", cat:"school"},
+  {id:89, zh:"備份電腦/手機的檔案", en:"backup my computer/phone files", past:"backed up my computer/phone files", cat:"school"},
+  {id:90, zh:"報稅", en:"file taxes", past:"filed taxes", cat:"school", sa:true},
+
+  // 1.4 Social & Downtime (91-120)
+  {id:91, zh:"出門", en:"head out", past:"headed out", cat:"social", sa:true},
+  {id:92, zh:"早晨慢跑", en:"go for a morning jog", past:"went for a morning jog", cat:"social", sa:true},
+  {id:93, zh:"去健身房", en:"go to the gym", past:"went to the gym", cat:"social", sa:true},
+  {id:94, zh:"和朋友打籃球", en:"go play basketball with my friends", past:"went to play basketball with my friends", cat:"social", sa:true},
+  {id:95, zh:"在朋友家聚會", en:"hang out with my friend at her place", past:"hung out with my friend at her place", cat:"social", sa:true},
+  {id:96, zh:"搭火車/公車/Uber", en:"catch the train/bus/an Uber", past:"caught the train/bus/an Uber", cat:"social", sa:true},
+  {id:97, zh:"打電話和朋友聊近況", en:"call a friend to catch up", past:"called a friend to catch up", cat:"social", sa:true},
+  {id:98, zh:"在圖書館待一小時", en:"spend an hour in the library", past:"spent an hour in the library", cat:"social", sa:true},
+  {id:99, zh:"去看表演/戲劇/音樂劇", en:"go to a show/play/musical", past:"went to a show/play/musical", cat:"social", sa:true},
+  {id:100, zh:"去試吃看看新開的甜點店", en:"check out a new dessert place", past:"checked out a new dessert place", cat:"social", sa:true},
+  {id:101, zh:"網購", en:"do some shopping online", past:"did some shopping online", cat:"social", sa:true},
+  {id:102, zh:"買點糕點/蛋糕去參加生日派對", en:"pick up some pastries/cake for the birthday party", past:"picked up some pastries/cake for the birthday party", cat:"social", sa:true},
+  {id:103, zh:"去舊金山玩五天", en:"go to San Francisco for a 5-day trip", past:"went to San Francisco for a 5-day trip", cat:"social", sa:true},
+  {id:104, zh:"去台中探望姑姑和她的家人", en:"go to Tai Chung to visit my aunt and her family", past:"went to Tai Chung to visit my aunt and her family", cat:"social"},
+  {id:105, zh:"和朋友去爬山", en:"go hiking with friends", past:"went hiking with friends", cat:"social", sa:true},
+  {id:106, zh:"參加演唱會/音樂節", en:"go to a concert/music festival", past:"went to a concert/music festival", cat:"social", sa:true},
+  {id:107, zh:"去看電影", en:"go to a movie", past:"went to a movie", cat:"social", sa:true},
+  {id:108, zh:"策劃驚喜生日派對", en:"plan a surprise birthday party", past:"planned a surprise birthday party", cat:"social"},
+  {id:109, zh:"參加家庭聚會", en:"attend a family gathering", past:"attended a family gathering", cat:"social"},
+  {id:110, zh:"去教堂/參加主日禮拜", en:"attend the church/Sunday service", past:"attended the church/Sunday service", cat:"social"},
+  {id:111, zh:"幫朋友搬家", en:"help a friend move", past:"helped a friend move", cat:"social", sa:true},
+  {id:112, zh:"參加線上遊戲之夜", en:"join a virtual game night", past:"joined a virtual game night", cat:"social", sa:true},
+  {id:113, zh:"看電影/影集/紀錄片", en:"watch a movie/show/documentary", past:"watched a movie/show/documentary", cat:"social", sa:true},
+  {id:114, zh:"和朋友/家人視訊聊天", en:"video chat with my friend/family member", past:"video chatted with my friend/family member", cat:"social", sa:true},
+  {id:115, zh:"漱口", en:"rinse my mouth", past:"rinsed my mouth", cat:"social"},
+  {id:116, zh:"完成我的皮膚保濕/睡前習慣", en:"finish my skincare/night routine", past:"finished my skincare/night routine", cat:"social"},
+  {id:117, zh:"檢查明天的行程與待辦事項", en:"review my schedule and to-do list for tomorrow", past:"reviewed my schedule and to-do list for tomorrow", cat:"social", sa:true},
+  {id:118, zh:"設定 7:30 的鬧鐘", en:"put an alarm for 7:30 AM", past:"put an alarm for 7:30 AM", cat:"social"},
+  {id:119, zh:"休息放鬆一下", en:"take a break and chill", past:"took a break and chilled", cat:"social", sa:true},
+  {id:120, zh:"早點睡覺", en:"sleep early", past:"slept early", cat:"social", sa:true},
+];
+
+const CATS = {routine:"每日例行 Routine", home:"家務整理 Home", school:"工作學校 Work & School", social:"社交休閒 Social"};
+const CAT_COLORS = {routine:"b-blue", home:"b-green", school:"b-orange", social:"b-purple"};
+
+// State
+let S = {
+  mode:'home', idx:0, queue:[], score:{ok:0, total:0},
+  speed:0.75, cat:null, showResult:false, answer:'', recognized:'', isRec:false,
+  tense:'future' // future or past
+};
+
+// ============ RENDER ============
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = {
+    home: renderHome,
+    review: renderReview,
+    shadow: renderShadow,
+    fillPhrase: renderFillPhrase,
+    fullSentence: renderFullSentence,
+    morningEvening: renderMorningEvening,
+  }[S.mode]();
+  bindEvents();
+}
+
+function renderHome() {
+  const tp = +(localStorage.getItem('tp')||0);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  let installHTML = '';
+  if (!isStandalone && isIOS) {
+    installHTML = `<div class="install-banner"><p>點擊 Safari 底部 <strong>分享</strong> 按鈕 → <strong>加入主畫面</strong> 即可安裝</p></div>`;
+  }
+  return `
+    <div class="home-title">
+      <h1>120 個日常短句練習</h1>
+      <p>克雷英文三天變身挑戰營 DAY 1</p>
+    </div>
+    ${installHTML}
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">120</div><div class="stat-label">總句數</div></div>
+      <div class="stat-box"><div class="stat-num">${tp}</div><div class="stat-label">已練習</div></div>
+    </div>
+    <div class="home-card" onclick="S.mode='review';S.reviewCat='routine';S.reviewSearch='';render()">
+      <h3>&#128214; 複習全部短句</h3>
+      <p>按分類瀏覽 120 個短句，點擊播放聽發音<br>先熟悉再練習效果更好！</p>
+    </div>
+    <div class="home-card" onclick="startMistakes()" id="mistakes-card">
+      <h3>&#10060; 常錯題集</h3>
+      <p>針對答錯的題目反覆練習<br><span id="mistakes-count">${getMistakes().length} 題待加強</span></p>
+    </div>
+    <div class="home-card" onclick="start('morningEvening')">
+      <h3>&#9728;&#65039; 早安法 / 晚安法（核心練習）</h3>
+      <p>早安法：I'm going to + 短句<br>晚安法：I V-ed / I was going to + 短句<br>看中文 → 打出完整英文句子</p>
+    </div>
+    <div class="home-card" onclick="start('fillPhrase')">
+      <h3>&#9997;&#65039; 短句填空</h3>
+      <p>看中文提示 → 填入正確英文短句<br>例：去吃午餐 → go get lunch</p>
+    </div>
+    <div class="home-card" onclick="start('shadow')">
+      <h3>&#127908; 跟讀練習</h3>
+      <p>聽完整句 → 語音辨識跟讀 → 糾正發音</p>
+    </div>
+    <div class="home-card" onclick="start('fullSentence')">
+      <h3>&#128221; 完整句子聽寫</h3>
+      <p>聽 I'm going to... 完整句 → 打出來</p>
+    </div>
+  `;
+}
+
+function start(mode) {
+  S.mode = mode;
+  S.idx = 0;
+  S.score = {ok:0, total:0};
+  S.showResult = false;
+  S.answer = '';
+  S.recognized = '';
+  // Build queue: prioritize study-abroad phrases (70%)
+  let pool = [...DATA];
+  if (S.cat) pool = pool.filter(p => p.cat === S.cat);
+  const sa = pool.filter(p => p.sa);
+  const other = pool.filter(p => !p.sa);
+  const saCount = Math.min(sa.length, Math.ceil(12 * 0.7));
+  const otherCount = 12 - saCount;
+  S.queue = shuffle(sa).slice(0, saCount).concat(shuffle(other).slice(0, otherCount));
+  S.queue = shuffle(S.queue).slice(0, 12);
+  render();
+}
+
+// ============ REVIEW MODE ============
+function renderReview() {
+  const cat = S.reviewCat || 'routine';
+  const search = (S.reviewSearch || '').toLowerCase();
+  let items = DATA.filter(p => p.cat === cat);
+  if (search) {
+    items = DATA.filter(p => p.zh.includes(search) || p.en.toLowerCase().includes(search) || p.past.toLowerCase().includes(search));
+  }
+  const catCounts = {routine:30, home:30, school:30, social:30};
+  const isPlaying = S._autoPlaying;
+  const currentId = S._autoPlayId;
+  return `
+    <button class="btn-back" onclick="stopAutoPlay();goHome()">&#8592; 返回首頁</button>
+    <h2 style="color:#5bf;font-size:18px;margin-bottom:12px">&#128214; 複習 120 個短句</h2>
+    <input class="rv-search" type="text" placeholder="&#128269; 搜尋中文或英文..." value="${esc(S.reviewSearch||'')}" oninput="S.reviewSearch=this.value;stopAutoPlay();render()">
+    <div class="tab-row">
+      <button class="tab-btn ${cat==='routine'&&!search?'on':''}" onclick="S.reviewCat='routine';S.reviewSearch='';stopAutoPlay();render()">&#9728;&#65039; 每日例行 (30)</button>
+      <button class="tab-btn ${cat==='home'&&!search?'on':''}" onclick="S.reviewCat='home';S.reviewSearch='';stopAutoPlay();render()">&#127968; 家務整理 (30)</button>
+      <button class="tab-btn ${cat==='school'&&!search?'on':''}" onclick="S.reviewCat='school';S.reviewSearch='';stopAutoPlay();render()">&#128188; 工作學校 (30)</button>
+      <button class="tab-btn ${cat==='social'&&!search?'on':''}" onclick="S.reviewCat='social';S.reviewSearch='';stopAutoPlay();render()">&#127881; 社交休閒 (30)</button>
+    </div>
+    ${isPlaying ? `
+      <button class="btn btn-stop" onclick="stopAutoPlay()">&#9724; 停止播放</button>
+    ` : `
+      <button class="btn btn-p" onclick="startAutoPlay('future')" style="margin-bottom:6px">&#9728;&#65039; 一次唸全部（I'm going to...）</button>
+      <button class="btn btn-s" onclick="startAutoPlay('past')">&#127769; 一次唸全部（I V-ed 過去式）</button>
+    `}
+    ${isPlaying ? `<div style="text-align:center;margin-bottom:12px"><span class="badge ${S._autoPlayTense==='past'?'b-purple':'b-blue'}">&#127925; ${S._autoPlayTense==='past'?'過去式':'未來式'} 第 ${items.findIndex(p=>p.id===currentId)+1}/${items.length} 句</span></div>` : ''}
+    <div>
+      ${items.map(p => `
+        <div class="rv-item ${p.id===currentId?'rv-active':''}" id="rv-${p.id}">
+          <div class="rv-num">${p.id}</div>
+          <div class="rv-body">
+            <div class="rv-en">${p.en}</div>
+            <div class="rv-zh">${p.zh}</div>
+            <div class="rv-past">過去式：${p.past}</div>
+          </div>
+          <button class="rv-play" onclick="event.stopPropagation();speakTouch('I\\'m going to ${esc(p.en)}.')" title="播放">&#9654;</button>
+        </div>
+      `).join('')}
+    </div>
+    ${items.length===0?'<p style="text-align:center;color:#6a8ab0;padding:20px">沒有找到符合的短句</p>':''}
+  `;
+}
+
+// ============ MISTAKES MODE ============
+function getMistakes() {
+  try { return JSON.parse(localStorage.getItem('mistakes') || '[]'); } catch(e) { return []; }
+}
+function addMistake(id) {
+  const m = getMistakes();
+  if (!m.includes(id)) { m.push(id); localStorage.setItem('mistakes', JSON.stringify(m)); }
+}
+function removeMistake(id) {
+  const m = getMistakes().filter(x => x !== id);
+  localStorage.setItem('mistakes', JSON.stringify(m));
+}
+function startMistakes() {
+  const m = getMistakes();
+  if (m.length === 0) { alert('還沒有常錯題！先去練習幾輪吧。'); return; }
+  S.mode = 'morningEvening';
+  S.idx = 0;
+  S.score = {ok:0, total:0};
+  S.showResult = false;
+  S.answer = '';
+  S.recognized = '';
+  S._tenseSet = false;
+  S._isMistakeMode = true;
+  S.queue = shuffle(DATA.filter(p => m.includes(p.id))).slice(0, 12);
+  render();
+}
+
+// ============ MORNING/EVENING MODE (CORE) ============
+function renderMorningEvening() {
+  if (S.idx >= S.queue.length) return renderDone();
+  const p = S.queue[S.idx];
+  const pct = (S.idx / S.queue.length) * 100;
+
+  // Randomly pick future or past tense
+  if (!S.showResult && !S._tenseSet) {
+    S.tense = Math.random() > 0.5 ? 'future' : 'past';
+    S._tenseSet = true;
+  }
+
+  const isFuture = S.tense === 'future';
+  const correctSentence = isFuture
+    ? `I'm going to ${p.en}.`
+    : `I ${p.past}.`;
+  const altSentence = isFuture
+    ? null
+    : `I was going to ${p.en}.`;
+
+  let resultHTML = '';
+  if (S.showResult) {
+    const comp = compareWords(S.answer, correctSentence);
+    const altComp = altSentence ? compareWords(S.answer, altSentence) : null;
+    const bestComp = (altComp && altComp.score > comp.score) ? altComp : comp;
+    const bestAnswer = (altComp && altComp.score > comp.score) ? altSentence : correctSentence;
+    const sc = bestComp.score;
+    const cls = sc >= 85 ? 'sc-g' : sc >= 50 ? 'sc-y' : 'sc-r';
+    resultHTML = `
+      <div class="res">
+        <div class="res-label">&#10004; 正確答案：</div>
+        <div class="res-text" style="color:#2d7;font-size:17px">${correctSentence}</div>
+        ${altSentence ? `<div class="res-text" style="color:#8ab;font-size:14px;margin-top:4px">或：${altSentence}</div>` : ''}
+      </div>
+      <div class="res">
+        <div class="res-label">你的答案：</div>
+        <div class="res-text">${bestComp.html}</div>
+      </div>
+      <div class="sc ${cls}">${bestComp.ok}/${bestComp.total} · ${sc}%</div>
+      <div class="audio-row">
+        <button class="btn-play" onclick="speak('${esc(correctSentence)}')">&#9654;</button>
+        <span style="color:#6a8ab0;font-size:13px">聽正確句子</span>
+      </div>
+      <button class="btn btn-p" onclick="next()">下一題 &#8594;</button>
+    `;
+  }
+
+  return `
+    <button class="btn-back" onclick="goHome()">&#8592; 返回</button>
+    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="prog-text">${S.idx+1}/${S.queue.length} 題 · 答對 ${S.score.ok}</div>
+    <div class="card">
+      <span class="badge ${isFuture?'b-blue':'b-purple'}">${isFuture?'&#9728;&#65039; 早安法（未來式）':'&#127769; 晚安法（過去式）'}</span>
+      <span class="badge ${CAT_COLORS[p.cat]}">${CATS[p.cat]}</span>
+      ${p.sa?'<span class="badge b-orange">留學生常用</span>':''}
+      <div class="card-zh" style="font-size:18px;margin-top:8px;margin-bottom:12px"><strong>${p.zh}</strong></div>
+      <div class="frame">
+        ${isFuture
+          ? `<strong>I'm going to</strong> __________.`
+          : `<strong>I + 過去式動詞</strong> __________.<br><span style="font-size:13px;color:#6a8ab0">或 <strong>I was going to</strong> __________.</span>`
+        }
+      </div>
+    </div>
+    ${!S.showResult ? `
+      <div style="margin-bottom:12px">
+        <textarea class="inp" id="main-inp" placeholder="${isFuture ? "I'm going to ..." : "I V-ed ... 或 I was going to ..."}" oninput="S.answer=this.value">${esc(S.answer)}</textarea>
+      </div>
+      <button class="btn btn-p" onclick="checkME()">確認送出</button>
+      <button class="btn btn-sk" onclick="skip()">跳過</button>
+    ` : resultHTML}
+  `;
+}
+
+function checkME() {
+  if (!S.answer.trim()) { alert('請輸入句子！'); return; }
+  const p = S.queue[S.idx];
+  const isFuture = S.tense === 'future';
+  const correct = isFuture ? `I'm going to ${p.en}.` : `I ${p.past}.`;
+  const alt = isFuture ? null : `I was going to ${p.en}.`;
+  const comp = compareWords(S.answer, correct);
+  const altComp = alt ? compareWords(S.answer, alt) : null;
+  const best = (altComp && altComp.score > comp.score) ? altComp.score : comp.score;
+  S.score.total++;
+  if (best >= 60) { S.score.ok++; removeMistake(p.id); }
+  else { addMistake(p.id); }
+  S.showResult = true;
+  render();
+}
+
+// ============ FILL PHRASE MODE ============
+function renderFillPhrase() {
+  if (S.idx >= S.queue.length) return renderDone();
+  const p = S.queue[S.idx];
+  const pct = (S.idx / S.queue.length) * 100;
+
+  let resultHTML = '';
+  if (S.showResult) {
+    const comp = compareWords(S.answer, p.en);
+    const sc = comp.score;
+    const cls = sc >= 85 ? 'sc-g' : sc >= 50 ? 'sc-y' : 'sc-r';
+    resultHTML = `
+      <div class="res">
+        <div class="res-label">正確答案：</div>
+        <div class="res-text" style="color:#2d7">${p.en}</div>
+      </div>
+      <div class="res">
+        <div class="res-label">你的答案：</div>
+        <div class="res-text">${comp.html}</div>
+      </div>
+      <div class="sc ${cls}">${comp.ok}/${comp.total} · ${sc}%</div>
+      <div style="margin-top:8px">
+        <div class="res-label">完整句子：</div>
+        <div style="color:#8ab;font-size:14px;margin:4px 0">&#9728; I'm going to ${p.en}.</div>
+        <div style="color:#8ab;font-size:14px;margin:4px 0">&#127769; I ${p.past}.</div>
+      </div>
+      <div class="audio-row" style="margin-top:12px">
+        <button class="btn-play" onclick="speak('I\\'m going to ${esc(p.en)}')">&#9654;</button>
+        <span style="color:#6a8ab0;font-size:13px">聽完整句</span>
+      </div>
+      <button class="btn btn-p" onclick="next()">下一題 &#8594;</button>
+    `;
+  }
+
+  return `
+    <button class="btn-back" onclick="goHome()">&#8592; 返回</button>
+    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="prog-text">${S.idx+1}/${S.queue.length} 題</div>
+    <div class="card">
+      <span class="badge b-green">短句填空</span>
+      <span class="badge ${CAT_COLORS[p.cat]}">${CATS[p.cat]}</span>
+      ${p.sa?'<span class="badge b-orange">留學生常用</span>':''}
+      <div class="card-zh" style="font-size:18px;margin-top:8px"><strong>${p.zh}</strong></div>
+      <div class="audio-row" style="margin-top:12px">
+        <button class="btn-play" onclick="speak('${esc(p.en)}')" title="聽提示">&#9654;</button>
+        <span style="color:#6a8ab0;font-size:13px">聽音提示</span>
+      </div>
+    </div>
+    ${!S.showResult ? `
+      <div style="margin-bottom:12px">
+        <input class="inp" id="main-inp" placeholder="打出英文短句..." value="${esc(S.answer)}" oninput="S.answer=this.value">
+      </div>
+      <button class="btn btn-p" onclick="checkFill()">確認答案</button>
+      <button class="btn btn-sk" onclick="skip()">跳過</button>
+    ` : resultHTML}
+  `;
+}
+
+function checkFill() {
+  if (!S.answer.trim()) { alert('請輸入！'); return; }
+  const p = S.queue[S.idx];
+  const comp = compareWords(S.answer, p.en);
+  S.score.total++;
+  if (comp.score >= 60) { S.score.ok++; removeMistake(p.id); }
+  else { addMistake(p.id); }
+  S.showResult = true;
+  render();
+}
+
+// ============ SHADOW MODE ============
+function renderShadow() {
+  if (S.idx >= S.queue.length) return renderDone();
+  const p = S.queue[S.idx];
+  const pct = (S.idx / S.queue.length) * 100;
+  const sentence = `I'm going to ${p.en}.`;
+
+  let resultHTML = '';
+  if (S.showResult) {
+    const comp = compareWords(S.recognized || S.answer, sentence);
+    const sc = comp.score;
+    const cls = sc >= 85 ? 'sc-g' : sc >= 50 ? 'sc-y' : 'sc-r';
+    resultHTML = `
+      <div class="res">
+        <div class="res-label">參考答案：</div>
+        <div class="res-text" style="color:#2d7">${sentence}</div>
+        <div class="audio-row" style="margin-top:8px">
+          <button class="spd ${S.speed===0.75?'on':''}" onclick="setSpd(0.75)">0.75X</button>
+          <button class="spd ${S.speed===0.5?'on':''}" onclick="setSpd(0.5)">0.5X</button>
+          <button class="btn-play" onclick="speak('${esc(sentence)}')">&#9654;</button>
+        </div>
+      </div>
+      <div class="sc ${cls}">${comp.ok}/${comp.total} · ${sc}%</div>
+      <div class="show-link"><a onclick="document.getElementById('my-ans').classList.toggle('hidden')">顯示我剛剛說的</a></div>
+      <div id="my-ans" class="hidden res" style="margin-top:8px">
+        <div class="res-label">你說的：</div>
+        <div class="res-text">${comp.html}</div>
+      </div>
+      <button class="btn btn-p" onclick="next()" style="margin-top:12px">下一題 &#8594;</button>
+    `;
+  }
+
+  return `
+    <button class="btn-back" onclick="goHome()">&#8592; 返回</button>
+    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="prog-text">${S.idx+1}/${S.queue.length} 題 · 完成 ${S.score.ok}</div>
+    <div class="card">
+      <span class="badge b-blue">跟讀</span>
+      <span class="badge ${CAT_COLORS[p.cat]}">${CATS[p.cat]}</span>
+      <div class="card-lg" style="margin-top:8px">${sentence}</div>
+      <div class="card-zh">${p.zh}</div>
+      <div class="audio-row">
+        <button class="btn-play" onclick="speak('${esc(sentence)}')">&#9654;</button>
+        <span style="color:#6a8ab0;font-size:13px">&#128266; ${S.speed}x</span>
+        <button class="spd ${S.speed===0.75?'on':''}" onclick="setSpd(0.75)">0.75X</button>
+        <button class="spd ${S.speed===0.5?'on':''}" onclick="setSpd(0.5)">0.5X</button>
+      </div>
+    </div>
+    ${!S.showResult ? `
+      <button class="btn btn-mic ${S.isRec?'rec':''}" onclick="toggleRec()">
+        ${S.isRec?'&#9899; 錄音中... 點擊停止':'&#127908; 開始跟讀（語音辨識）'}
+      </button>
+      <div style="margin-bottom:12px">
+        <input class="inp" id="main-inp" placeholder="或在此打字輸入..." value="${esc(S.answer)}" oninput="S.answer=this.value">
+      </div>
+      <button class="btn btn-p" onclick="checkShadow()">確認送出</button>
+      <button class="btn btn-sk" onclick="skip()">跳過</button>
+    ` : resultHTML}
+  `;
+}
+
+function checkShadow() {
+  const ans = S.answer || S.recognized;
+  if (!ans.trim()) { alert('請先跟讀或打字！'); return; }
+  S.recognized = ans;
+  const p = S.queue[S.idx];
+  const sentence = `I'm going to ${p.en}.`;
+  const comp = compareWords(ans, sentence);
+  S.score.total++;
+  if (comp.score >= 60) { S.score.ok++; removeMistake(p.id); }
+  else { addMistake(p.id); }
+  S.showResult = true;
+  render();
+}
+
+// ============ FULL SENTENCE LISTEN & WRITE ============
+function renderFullSentence() {
+  if (S.idx >= S.queue.length) return renderDone();
+  const p = S.queue[S.idx];
+  const pct = (S.idx / S.queue.length) * 100;
+  // Alternate between future and past
+  if (!S.showResult && !S._tenseSet) {
+    S.tense = Math.random() > 0.5 ? 'future' : 'past';
+    S._tenseSet = true;
+  }
+  const isFuture = S.tense === 'future';
+  const sentence = isFuture ? `I'm going to ${p.en}.` : `I ${p.past}.`;
+
+  let resultHTML = '';
+  if (S.showResult) {
+    const comp = compareWords(S.answer, sentence);
+    const sc = comp.score;
+    const cls = sc >= 85 ? 'sc-g' : sc >= 50 ? 'sc-y' : 'sc-r';
+    resultHTML = `
+      <div class="res">
+        <div class="res-label">正確答案：</div>
+        <div class="res-text" style="color:#2d7">${sentence}</div>
+      </div>
+      <div class="res">
+        <div class="res-label">你的答案：</div>
+        <div class="res-text">${comp.html}</div>
+      </div>
+      <div class="sc ${cls}">${comp.ok}/${comp.total} · ${sc}%</div>
+      <button class="btn btn-p" onclick="next()">下一題 &#8594;</button>
+    `;
+  }
+
+  return `
+    <button class="btn-back" onclick="goHome()">&#8592; 返回</button>
+    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="prog-text">${S.idx+1}/${S.queue.length} 題</div>
+    <div class="card">
+      <span class="badge ${isFuture?'b-blue':'b-purple'}">${isFuture?'聽寫（未來式）':'聽寫（過去式）'}</span>
+      <span class="badge ${CAT_COLORS[p.cat]}">${CATS[p.cat]}</span>
+      <div class="card-zh" style="font-size:16px;margin-top:8px">${p.zh}</div>
+      <div class="audio-row" style="margin-top:12px">
+        <button class="btn-play" onclick="speak('${esc(sentence)}')">&#9654;</button>
+        <span style="color:#6a8ab0;font-size:13px">&#128266; 聽完整句子後打出來</span>
+      </div>
+    </div>
+    ${!S.showResult ? `
+      <div style="margin-bottom:12px">
+        <textarea class="inp" id="main-inp" placeholder="打出你聽到的完整句子..." oninput="S.answer=this.value">${esc(S.answer)}</textarea>
+      </div>
+      <button class="btn btn-p" onclick="checkFull()">確認送出</button>
+      <button class="btn btn-sk" onclick="skip()">跳過</button>
+    ` : resultHTML}
+  `;
+}
+
+function checkFull() {
+  if (!S.answer.trim()) { alert('請輸入！'); return; }
+  const p = S.queue[S.idx];
+  const isFuture = S.tense === 'future';
+  const sentence = isFuture ? `I'm going to ${p.en}.` : `I ${p.past}.`;
+  const comp = compareWords(S.answer, sentence);
+  S.score.total++;
+  if (comp.score >= 60) { S.score.ok++; removeMistake(p.id); }
+  else { addMistake(p.id); }
+  S.showResult = true;
+  render();
+}
+
+// ============ DONE ============
+function renderDone() {
+  const t = S.score.total, o = S.score.ok;
+  const pct = t > 0 ? Math.round((o/t)*100) : 0;
+  localStorage.setItem('tp', +(localStorage.getItem('tp')||0) + t);
+  return `
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:64px;margin-bottom:12px">&#127881;</div>
+      <h2 style="color:#5bf;margin-bottom:8px">練習完成！</h2>
+      <p style="color:#6a8ab0;margin-bottom:24px">完成 ${t} 題練習</p>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">${o}</div><div class="stat-label">答對</div></div>
+        <div class="stat-box"><div class="stat-num">${t-o}</div><div class="stat-label">答錯</div></div>
+        <div class="stat-box"><div class="stat-num">${pct}%</div><div class="stat-label">正確率</div></div>
+      </div>
+      <button class="btn btn-p" onclick="start('${S.mode}')">再練一次</button>
+      <button class="btn btn-s" onclick="goHome()">回首頁</button>
+    </div>
+  `;
+}
+
+// ============ ACTIONS ============
+function goHome() { S.mode='home'; S._isMistakeMode=false; render(); }
+function setSpd(s) { S.speed=s; render(); }
+function next() { S.idx++; S.showResult=false; S.answer=''; S.recognized=''; S._tenseSet=false; render(); if(S.idx<S.queue.length&&(S.mode==='shadow'||S.mode==='fullSentence')){const p=S.queue[S.idx];const isFuture=Math.random()>0.5;S.tense=isFuture?'future':'past';S._tenseSet=true;const sen=isFuture?`I'm going to ${p.en}.`:`I ${p.past}.`;setTimeout(()=>speak(sen),500);}}
+function skip() { S.score.total++; next(); }
+
+// iOS Safari requires user gesture to unlock speechSynthesis
+let _audioUnlocked = false;
+function unlockAudio() {
+  if (_audioUnlocked) return;
+  const u = new SpeechSynthesisUtterance('');
+  u.volume = 0;
+  speechSynthesis.speak(u);
+  _audioUnlocked = true;
+}
+document.addEventListener('touchstart', unlockAudio, {once: true});
+document.addEventListener('click', unlockAudio, {once: true});
+
+function speak(text) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=S.speed;
+  const v=speechSynthesis.getVoices();
+  const uv=v.find(x=>x.lang==='en-US'&&x.name.includes('Samantha'))||v.find(x=>x.lang==='en-US')||v.find(x=>x.lang.startsWith('en'));
+  if(uv)u.voice=uv;
+  speechSynthesis.speak(u);
+}
+
+// For review mode - direct call from button tap (user gesture)
+function speakTouch(text) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=S.speed;
+  const v=speechSynthesis.getVoices();
+  const uv=v.find(x=>x.lang==='en-US'&&x.name.includes('Samantha'))||v.find(x=>x.lang==='en-US')||v.find(x=>x.lang.startsWith('en'));
+  if(uv)u.voice=uv;
+  speechSynthesis.speak(u);
+}
+
+// ============ AUTO PLAY ALL ============
+function startAutoPlay(tense) {
+  const cat = S.reviewCat || 'routine';
+  const search = (S.reviewSearch || '').toLowerCase();
+  let items = search
+    ? DATA.filter(p => p.zh.includes(search) || p.en.toLowerCase().includes(search) || p.past.toLowerCase().includes(search))
+    : DATA.filter(p => p.cat === cat);
+  if (items.length === 0) return;
+  S._autoPlaying = true;
+  S._autoPlayItems = items;
+  S._autoPlayIdx = 0;
+  S._autoPlayTense = tense || 'future';
+  playNextInSequence();
+}
+
+function playNextInSequence() {
+  if (!S._autoPlaying) return;
+  const items = S._autoPlayItems;
+  const idx = S._autoPlayIdx;
+  if (idx >= items.length) { stopAutoPlay(); return; }
+  const p = items[idx];
+  S._autoPlayId = p.id;
+  render();
+  // Scroll the active item into view
+  setTimeout(() => {
+    const el = document.getElementById('rv-' + p.id);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 100);
+  // Speak based on tense
+  speechSynthesis.cancel();
+  const sentence = S._autoPlayTense === 'past'
+    ? "I " + p.past + "."
+    : "I'm going to " + p.en + ".";
+  const u = new SpeechSynthesisUtterance(sentence);
+  u.lang = 'en-US';
+  u.rate = S.speed;
+  const v = speechSynthesis.getVoices();
+  const uv = v.find(x=>x.lang==='en-US'&&x.name.includes('Samantha'))||v.find(x=>x.lang==='en-US')||v.find(x=>x.lang.startsWith('en'));
+  if (uv) u.voice = uv;
+  u.onend = () => {
+    if (!S._autoPlaying) return;
+    // Pause 1.5s between sentences
+    S._autoPlayTimer = setTimeout(() => {
+      S._autoPlayIdx++;
+      playNextInSequence();
+    }, 1500);
+  };
+  speechSynthesis.speak(u);
+}
+
+function stopAutoPlay() {
+  S._autoPlaying = false;
+  S._autoPlayId = null;
+  speechSynthesis.cancel();
+  if (S._autoPlayTimer) { clearTimeout(S._autoPlayTimer); S._autoPlayTimer = null; }
+  render();
+}
+
+function toggleRec() {
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('請使用 Chrome 瀏覽器以支援語音辨識');return;}
+  if(S.isRec){if(window._rec)window._rec.stop();S.isRec=false;render();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const r=new SR();r.lang='en-US';r.continuous=false;r.interimResults=false;
+  r.onresult=e=>{S.recognized=e.results[0][0].transcript;S.answer=S.recognized;S.isRec=false;render();};
+  r.onerror=()=>{S.isRec=false;render();};
+  r.onend=()=>{S.isRec=false;};
+  r.start();window._rec=r;S.isRec=true;render();
+}
+
+function bindEvents() {
+  const inp=document.getElementById('main-inp');
+  if(inp)setTimeout(()=>inp.focus(),100);
+  document.querySelectorAll('input,textarea').forEach(el=>{
+    el.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();
+        if(S.mode==='morningEvening')checkME();
+        else if(S.mode==='fillPhrase')checkFill();
+        else if(S.mode==='shadow')checkShadow();
+        else if(S.mode==='fullSentence')checkFull();
+      }
+    });
+  });
+}
+
+// ============ UTILITIES ============
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function compareWords(user, correct) {
+  const cu=user.toLowerCase().replace(/[.,!?;:'"]/g,'').trim().split(/\s+/).filter(Boolean);
+  const cc=correct.toLowerCase().replace(/[.,!?;:'"]/g,'').trim().split(/\s+/).filter(Boolean);
+  const cw=correct.split(/\s+/);
+  let ok=0;const html=[];
+  cc.forEach((w,i)=>{
+    if(cu.includes(w)){ok++;html.push(`<span class="w-ok">${cw[i]||w}</span>`);}
+    else{html.push(`<span class="w-no">${cu[i]||'___'}</span>`);}
+  });
+  return {score:Math.round((ok/cc.length)*100),ok,total:cc.length,html:html.join(' ')};
+}
+
+speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
+// PWA
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+render();
+</script>
+</body>
+</html>
